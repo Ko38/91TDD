@@ -3,6 +3,8 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using ExpectedObjects;
 
 namespace IsolatedByInheritanceAndOverride.Test
 {
@@ -62,10 +64,44 @@ namespace IsolatedByInheritanceAndOverride.Test
         [TestMethod]
         public void Test_SyncBookOrders_3_Orders_Only_2_book_order()
         {
-            // hard to isolate dependency to unit test
+			// hard to isolate dependency to unit test
+			var target = new MockOrderService();
+			//var expected = new List<Order>()
+			//{
+			//	new Order{ Type ="Book", Price=10,ProductName="Good", CustomerName="Steve"},
+			//		new Order{ Type ="Book", Price=12,ProductName="Good", CustomerName="91" }
+			//};
 
-            //var target = new OrderService();
-            //target.SyncBookOrders();
-        }
-    }
+			var fakeBookDao = Substitute.For<IBookDao>();
+			target.SetBookDao(fakeBookDao);
+			target.SyncBookOrders();
+			fakeBookDao.Received(2).Insert(Arg.Is<Order>(x => x.Type == "Book"));
+			//var target = new OrderService();
+			//target.SyncBookOrders();
+		}
+
+		public class MockOrderService : OrderService
+		{
+			public IBookDao BookDao { get; set; }
+			public void SetBookDao(IBookDao bookDao)
+			{
+				BookDao = bookDao;
+			}
+			override protected List<Order> GetOrders()
+			{
+				var list = new List<Order>
+				{
+					new Order{ Type ="Book"},
+					new Order{ Type ="Tv"},
+					new Order{ Type ="Book"}
+				};
+				return list;
+			}
+
+			override protected IBookDao CreateBookDao()
+			{
+				return BookDao;
+			}
+		}
+	}
 }

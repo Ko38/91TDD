@@ -14,9 +14,9 @@ namespace IsolatedByInheritanceAndOverride.Test
     {
         public OrderServiceTest()
         {
-            //
+            // 
             // TODO:  在此加入建構函式的程式碼
-            //
+            // 
         }
 
         private TestContext testContextInstance;
@@ -60,12 +60,12 @@ namespace IsolatedByInheritanceAndOverride.Test
         #endregion
 
         [Test]
-        public void Test_SyncBookOrders_3_Orders_Only_2_book_order()
+        public void Test_SyncBookOrders_3_Orders_Only_2_book_orderNunit()
         {
             // hard to isolate dependency to unit test
 
-            //var target = new OrderService();
-            //target.SyncBookOrders();
+            var target = new OrderService();
+            target.SyncBookOrders();
         }
     }
 }

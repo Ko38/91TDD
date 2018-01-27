@@ -8,6 +8,10 @@ using System.Text;
 
 namespace IsolatedByInheritanceAndOverride
 {
+	public interface IBookDao
+	{
+		void Insert(Order order);
+	}
     public class OrderService
     {
         private string _filePath = @"C:\temp\testOrders.csv";
@@ -19,14 +23,19 @@ namespace IsolatedByInheritanceAndOverride
             // only get orders of book
             var ordersOfBook = orders.Where(x => x.Type == "Book");
 
-            var bookDao = new BookDao();
+            var bookDao = CreateBookDao();
             foreach (var order in ordersOfBook)
             {
                 bookDao.Insert(order);
             }
         }
 
-        private List<Order> GetOrders()
+		protected virtual IBookDao CreateBookDao()
+		{
+			return new BookDao();
+		}
+
+        protected virtual List<Order> GetOrders()
         {
             // parse csv file to get orders
             var result = new List<Order>();
@@ -80,9 +89,9 @@ namespace IsolatedByInheritanceAndOverride
         public string CustomerName { get; set; }
     }
 
-    public class BookDao
-    {
-        internal void Insert(Order order)
+    public class BookDao : IBookDao
+	{
+        public void Insert(Order order)
         {
             // directly depend on some web service
             //var client = new HttpClient();
